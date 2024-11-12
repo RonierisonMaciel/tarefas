@@ -1,16 +1,27 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Tarefa
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 # Create your views here.
-
 
 @login_required
 def lista_tarefas(request):
     if request.method == 'POST':
         titulo = request.POST.get('titulo')
         if titulo:
-            Tarefa.objects.create(titulo=titulo, usuario=request.user)
-            return redirect('lista_tarefas')
+            tarefa = Tarefa(titulo=titulo, usuario=request.user)
+            try:
+                tarefa.full_clean()
+                tarefa.save()
+                messages.success(request, 'Tarefa adicionada com sucesso!')
+            except ValidationError as e:
+                # lançamento de erro ao capturar o erro de validação e.message_dict['titulo'][0]
+                messages.error(request, e.message_dict)
+        else:
+            messages.error(request, 'O título da tarefa não pode ser vazio.')
+
+        return redirect('lista_tarefas')
 
     tarefas = Tarefa.objects.filter(usuario=request.user)
     return render(request, 'lista_tarefas.html', {'tarefas': tarefas})
