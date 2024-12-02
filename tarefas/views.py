@@ -16,8 +16,7 @@ def lista_tarefas(request):
                 tarefa.save()
                 messages.success(request, 'Tarefa adicionada com sucesso!')
             except ValidationError as e:
-                # lançamento de erro ao capturar o erro de validação e.message_dict['titulo'][0]
-                messages.error(request, e.message_dict)
+                messages.error(request, e.message_dict['titulo'][0])
         else:
             messages.error(request, 'O título da tarefa não pode ser vazio.')
 

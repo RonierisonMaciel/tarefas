@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 class Tarefa(models.Model):
-    titulo = models.CharField(max_length=100)
+    titulo = models.CharField(max_length=100, unique=True)
     concluida = models.BooleanField(default=False)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
